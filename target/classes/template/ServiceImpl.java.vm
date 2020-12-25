@@ -1,0 +1,92 @@
+package ${package}.${moduleName}.service.impl;
+
+import org.springframework.stereotype.Service;
+import com.bxwell.console.handler.UserUtils;
+import com.alibaba.fastjson.JSON;
+import com.jumore.dove.plugin.Page;
+import com.jumore.dove.service.BaseServiceImpl;
+import com.jumore.dove.util.ParamMap;
+import org.springframework.beans.BeanUtils;
+import com.bxwell.console.common.CommonConst;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Date;
+import ${package}.${moduleName}.entity.${pathName}.${className}Entity;
+import ${package}.${moduleName}.dto.${pathName}.Search${className}Dto;
+import ${package}.${moduleName}.dto.${pathName}.Add${className}Dto;
+import ${package}.${moduleName}.dto.${pathName}.Update${className}Dto;
+import ${package}.${moduleName}.vo.${pathName}.${className}Vo;
+import ${package}.${moduleName}.service.${pathName}.${className}Service;
+
+#foreach($column in $columns)
+    #if($column.columnName == $pk.columnName)
+        #set($primary = ${column.columnName})
+        #set($primaryName = ${column.attrname})
+        #set($columnType = ${column.attrType})
+        #set($setAttrName = ${column.setAttrName})
+    #end
+#end
+/**
+ * ${comments}ServiceImpl
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+@Service("${className}Service")
+public class ${className}ServiceImpl extends BaseServiceImpl  implements ${className}Service {
+
+    @Override
+    public Page<${className}Vo> find${className}List(Search${className}Dto search${className}Dto, Page<${className}Entity> page) {
+        ParamMap pm = JSON.parseObject(JSON.toJSONString(search${className}Dto), ParamMap.class);
+        Page<${className}Entity> pageEntityResult = this.findPageByParams(${className}Entity.class, page, "${classname}Mapper.${classname}List", pm);
+        List<${className}Entity> ${classname}List = pageEntityResult.result;
+        List<${className}Vo> ${classname}VoList = new ArrayList<>();
+        for (${className}Entity entity : ${classname}List) {
+            ${className}Vo ${classname}Vo = new ${className}Vo();
+            BeanUtils.copyProperties(entity, ${classname}Vo);
+            ${classname}VoList.add(${classname}Vo);
+        }
+        Page<${className}Vo> pageEntityResultVo = new Page<${className}Vo>();
+        pageEntityResultVo.result = ${classname}VoList;
+        pageEntityResultVo.setTotalResult(pageEntityResult.getTotalResult());
+        return pageEntityResultVo;
+    }
+
+    @Override
+    public ${className}Vo getDetailById(${columnType} ${primaryName}) {
+        ${className}Vo ${classname}Vo = new ${className}Vo();
+        ${className}Entity ${classname}Entity = this.get(${className}Entity.class, ${primaryName});
+        if(${classname}Entity != null){
+            BeanUtils.copyProperties(${classname}Entity, ${classname}Vo);
+        }
+        return ${classname}Vo;
+    }
+
+    @Override
+    public void add${className}(Add${className}Dto add${className}Dto) {
+        ${className}Entity ${classname}Entity = new ${className}Entity();
+        BeanUtils.copyProperties(add${className}Dto, ${classname}Entity);
+        ${classname}Entity.setCreateBy(UserUtils.isLogin() ? UserUtils.getCurrentUser().getUsername() : "");
+        ${classname}Entity.setCreateDt(new Date());
+        this.save(${classname}Entity);
+    }
+
+    @Override
+    public void update${className}ById(Update${className}Dto update${className}Dto) {
+        ${className}Entity ${classname}Entity = new ${className}Entity();
+        BeanUtils.copyProperties(update${className}Dto, ${classname}Entity);
+        ${classname}Entity.setUpdateBy(UserUtils.isLogin() ? UserUtils.getCurrentUser().getUsername() : "");
+        ${classname}Entity.setUpdateDt(new Date());
+        this.update(${classname}Entity);
+    }
+
+    @Override
+    public void delete${className}ById(${columnType} ${primaryName}) {
+        ${className}Entity ${classname}Entity = new ${className}Entity();
+        ${classname}Entity.${setAttrName}${primaryName});
+        ${classname}Entity.setIsDelete(CommonConst.IS_ACTIVE_1);
+        ${classname}Entity.setUpdateBy(UserUtils.isLogin() ? UserUtils.getCurrentUser().getUsername() : "");
+        ${classname}Entity.setUpdateDt(new Date());
+        this.update(${classname}Entity);
+    }
+}

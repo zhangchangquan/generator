@@ -1,0 +1,42 @@
+package ${package};
+
+#if(${hasBigDecimal})
+import java.math.BigDecimal;
+#end
+import java.io.Serializable;
+import java.util.Date;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+/**
+ *  ${comments}Vo
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+@ApiModel(description = "${comments}Vo")
+public class ${className}Vo implements Serializable {
+
+    private transient static final long serialVersionUID = 1L;
+
+#foreach ($column in $columns)
+#if($column.comments != "")
+    /**
+     * $column.comments
+     */
+#end
+    @ApiModelProperty(value = "$column.comments")
+    private $column.attrType $column.attrname;
+#end
+#foreach ($column in $columns)
+
+    public $column.attrType $column.getAttrName {
+        return $column.attrname;
+    };
+
+    public void $column.setAttrName$column.attrType $column.attrname) {
+        this.$column.attrname = $column.attrname;
+    }
+#end
+
+}

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="${classname}Mapper">
+
+#foreach($column in $columns)
+    #if($column.columnName == $pk.columnName)
+        #set($primary = ${column.columnName})
+        #set($primaryName = ${column.attrname})
+        #set($columnType = ${column.attrType})
+    #end
+#end
+
+    <select id="${classname}List" parameterType="paramMap" resultType="Map">
+        SELECT
+#foreach($column in $columns)
+#if($foreach.last)
+            ${column.columnName}
+#else
+            ${column.columnName},
+#end
+#end
+        FROM
+            ${tableName}
+        <where>
+#foreach($column in $columns)
+#if($column.columnName != $pk.columnName
+&& $column.columnName != "create_by"
+&& $column.columnName != "create_dt"
+&& $column.columnName != "update_by"
+&& $column.columnName != "update_dt")
+            <if test ='null != ${column.attrname} and "" != ${column.attrname}'>
+#if(${column.attrType} == "String" && ${column.columnName} != "is_delete")
+                AND ${column.columnName} LIKE CONCAT('%',#{${column.attrname}},'%')
+#else
+                AND ${column.columnName} = #{${column.attrname}}
+#end
+            </if>
+#end
+#end
+            <if test ='null != startDate and "" != startDate'>
+                AND DATE_FORMAT(create_dt, "%Y-%m-%d") &gt;= DATE_FORMAT(#{startDate}, "%Y-%m-%d")
+            </if>
+            <if test ='null != endDate and "" != endDate'>
+                AND DATE_FORMAT(create_dt, "%Y-%m-%d") &lt;= DATE_FORMAT(#{endDate}, "%Y-%m-%d")
+            </if>
+        </where>
+    </select>
+
+</mapper>

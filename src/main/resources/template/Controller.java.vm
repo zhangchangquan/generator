@@ -1,0 +1,113 @@
+package ${package}.${moduleName}.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.stereotype.Controller;
+import com.bxwell.console.handler.ResponseVo;
+import com.jumore.dove.plugin.Page;
+import com.jumore.dove.controller.base.BaseController;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+import java.util.List;
+
+import ${package}.${moduleName}.entity.${pathName}.${className}Entity;
+import ${package}.${moduleName}.dto.${pathName}.Search${className}Dto;
+import ${package}.${moduleName}.dto.${pathName}.Add${className}Dto;
+import ${package}.${moduleName}.dto.${pathName}.Update${className}Dto;
+import ${package}.${moduleName}.vo.${pathName}.${className}Vo;
+import ${package}.${moduleName}.service.${pathName}.${className}Service;
+
+#foreach($column in $columns)
+#if($column.columnName == $pk.columnName)
+#set($primary = ${column.columnName})
+#set($primaryName = ${column.attrname})
+#set($columnType = ${column.attrType})
+#end
+#end
+/**
+ * ${comments}Api
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+@Api(tags = "${className}Api")
+@Controller
+@RequestMapping("/${pathName}")
+public class ${className}Controller extends BaseController {
+    @Autowired
+    private ${className}Service ${classname}Service;
+
+    /**
+     * 列表
+     */
+    @ApiOperation(value = "列表查询")
+    @ResponseBody
+    @PostMapping(value = "/list")
+    public ResponseVo<List<${className}Vo>> list(@RequestBody Search${className}Dto search${className}Dto, @RequestBody Page<${className}Entity> page){
+        Page<${className}Vo> ${classname}List = ${classname}Service.find${className}List(search${className}Dto, page);
+
+        logHelper.getBuilder().info("查询结果",${classname}List);
+        ResponseVo<List<${className}Vo>> responseVo = ResponseVo.<List<${className}Vo>>BUILDER()
+                .setTotal(${classname}List.getTotalResult())
+                .setData(${classname}List.result);
+        return responseVo;
+    }
+
+
+    /**
+     * 信息
+     */
+    @ApiOperation(value = "详情信息")
+    @ResponseBody
+    @GetMapping(value = "/detail")
+    public ResponseVo<${className}Vo> info(@RequestParam(name = "${primaryName}") ${columnType} ${primaryName}){
+        ResponseVo<${className}Vo> responseVo = ResponseVo.<${className}Vo>BUILDER();
+        ${className}Vo ${classname}Vo = ${classname}Service.getDetailById(${primaryName});
+        responseVo.setData(${classname}Vo);
+        return responseVo;
+    }
+
+    /**
+     * 新增
+     */
+    @ApiOperation(value = "新增")
+    @ResponseBody
+    @PostMapping(value = "/add")
+    public ResponseVo<String> add(@RequestBody Add${className}Dto add${className}Dto){
+        ResponseVo<String> responseVo = ResponseVo.<String>BUILDER();
+        ${classname}Service.add${className}(add${className}Dto);
+        return responseVo;
+    }
+
+    /**
+     * 修改
+     */
+    @ApiOperation(value = "修改")
+    @ResponseBody
+    @PostMapping(value = "/update")
+    public ResponseVo<String> update(@RequestBody Update${className}Dto update${className}Dto){
+        ResponseVo<String> responseVo = ResponseVo.<String>BUILDER();
+		${classname}Service.update${className}ById(update${className}Dto);
+        return responseVo;
+    }
+
+    /**
+     * 删除
+     */
+    @ApiOperation(value = "删除")
+    @ResponseBody
+    @GetMapping(value = "/delete")
+    public ResponseVo<String> delete(@RequestParam(name = "${primaryName}") ${columnType} ${primaryName}){
+        ResponseVo<String> responseVo = ResponseVo.<String>BUILDER();
+        ${classname}Service.delete${className}ById(${primaryName});
+        return responseVo;
+    }
+
+}

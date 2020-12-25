@@ -1,0 +1,51 @@
+package ${package}.${moduleName}.service;
+
+import ${package}.${moduleName}.dto.${pathName}.Search${className}Dto;
+import ${package}.${moduleName}.dto.${pathName}.Add${className}Dto;
+import ${package}.${moduleName}.dto.${pathName}.Update${className}Dto;
+import ${package}.${moduleName}.vo.${pathName}.${className}Vo;
+import ${package}.${moduleName}.entity.${pathName}.${className}Entity;
+import com.jumore.dove.plugin.Page;
+
+/**
+ * ${comments}Service
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+public interface ${className}Service {
+
+    /**
+     *  列表查询
+     * @param search${className}Dto
+     * @param page
+     * @return
+     */
+    public Page<${className}Vo> find${className}List(Search${className}Dto search${className}Dto, Page<${className}Entity> page);
+
+    /**
+     * 根据id查询详情
+     * @param ${primaryName}
+     * @return
+     */
+    public ${className}Vo getDetailById(${columnType} ${primaryName});
+
+    /**
+     * 新增
+     * @param add${className}Dto
+     */
+    public void add${className}(Add${className}Dto add${className}Dto);
+
+    /**
+     * 修改
+     * @param update${className}Dto
+     */
+    public void update${className}ById(Update${className}Dto update${className}Dto);
+
+    /**
+     * 删除
+     * @param ${primaryName}
+     */
+    public void delete${className}ById(${columnType} ${primaryName});
+}
+

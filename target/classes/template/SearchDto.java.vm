@@ -1,0 +1,79 @@
+package ${package};
+
+#if(${hasBigDecimal})
+import java.math.BigDecimal;
+#end
+import java.io.Serializable;
+import java.util.Date;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+/**
+ *  列表查询${comments}Dto
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+@ApiModel(description = "列表查询${comments}Dto")
+public class Search${className}Dto implements Serializable {
+
+    private transient static final long serialVersionUID = 1L;
+#foreach ($column in $columns)
+#if($column.columnName != $pk.columnName
+&& $column.columnName != "create_by"
+&& $column.columnName != "create_dt"
+&& $column.columnName != "update_by"
+&& $column.columnName != "update_dt")
+#if($column.comments != "")
+    /**
+     * $column.comments
+     */
+#end
+    @ApiModelProperty(value = "$column.comments")
+    private $column.attrType $column.attrname;
+#end
+#end
+    /**
+     * 开始时间
+     */
+    @ApiModelProperty(value = "开始时间")
+    private String startDate;
+    /**
+     * 结束时间
+     */
+    @ApiModelProperty(value = "结束时间")
+    private String endDate;
+#foreach ($column in $columns)
+#if($column.columnName != $pk.columnName
+&& $column.columnName != "create_by"
+&& $column.columnName != "create_dt"
+&& $column.columnName != "update_by"
+&& $column.columnName != "update_dt")
+
+    public $column.attrType $column.getAttrName {
+        return $column.attrname;
+    };
+
+    public void $column.setAttrName$column.attrType $column.attrname) {
+        this.$column.attrname = $column.attrname;
+    }
+#end
+#end
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
+
+}
